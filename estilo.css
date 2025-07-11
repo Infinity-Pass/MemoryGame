@@ -1,0 +1,280 @@
+@import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&family=Poppins:wght@300;400;600&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #fce4ec; /* Um rosa bem clarinho e fofo */
+    background-image: url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%23f8bbd0' fill-opacity='0.4'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2H8c-2.21 0-4-1.79-4-4 0-3.314-2.686-6-6-6h2c2.21 0 4 1.79 4 4zm20 0c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2H28c-2.21 0-4-1.79-4-4 0-3.314-2.686-6-6-6h2c2.21 0 4 1.79 4 4zm20 0c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2H48c-2.21 0-4-1.79-4-4 0-3.314-2.686-6-6-6h2c2.21 0 4 1.79 4 4z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+    text-align: center;
+    color: #4e342e; 
+}
+
+.container-inicial, .container-jogo, .container-final {
+    background-color: rgba(255, 255, 255, 0.9); 
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    max-width: 600px; /* Aumentei um pouco para acomodar 4 colunas, se necessário */
+    width: 100%;
+    z-index: 1; /* Para garantir que fiquem acima dos corações de fundo */
+    animation: fadeIn 0.8s ease-out;
+}
+
+h1, h2 {
+    font-family: 'Comic Neue', cursive; 
+    color: #ad1457; 
+    margin-bottom: 20px;
+}
+
+p {
+    font-size: 1.1em;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+button {
+    background-color: #ff80ab; 
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.1em;
+    font-weight: 600;
+    border-radius: 50px; 
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 15px rgba(255, 128, 171, 0.5);
+}
+
+button:hover {
+    background-color: #f06292; 
+    transform: translateY(-2px); 
+}
+
+button:active {
+    transform: translateY(1px); 
+}
+
+/* Estilos do Jogo da Memória */
+.tabuleiro-jogo {
+    display: grid;
+    /* MODIFICADO: Ajustar colunas para 12 cartas (4x3) */
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 10px; /* Reduzi um pouco o gap para caber melhor */
+    justify-items: center;
+    margin-bottom: 20px;
+}
+
+.carta {
+    /* MODIFICADO: Ajustar tamanho para caber mais cartas na grade */
+    width: 90px; 
+    height: 126px; 
+    perspective: 1000px; 
+    cursor: pointer;
+    background-color: transparent;
+}
+
+.conteudo-carta {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.carta.virada .conteudo-carta {
+    transform: rotateY(180deg);
+}
+
+.carta.par-encontrado {
+    cursor: default; 
+    opacity: 0.5; /* Mais apagado para evidenciar que foi encontrado */
+    transform: scale(0.95); /* Leve encolhida */
+    transition: opacity 0.5s, transform 0.5s;
+}
+
+
+.frente-carta, .verso-carta {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.frente-carta {
+    background: linear-gradient(135deg, #ff9a8b 0%, #ff6a88 100%);
+    color: white;
+    font-size: 35px; /* Ajustei um pouco o tamanho do emoji */
+    /* content: '❤️'; /* No JavaScript, já definimos para '❤️' */
+    font-family: 'Comic Neue', cursive;
+}
+
+.verso-carta {
+    transform: rotateY(180deg); 
+}
+
+.verso-carta img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.container-final img#fotoFinal { /* Mais específico para a imagem final */
+    max-width: 80%;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    margin-bottom: 25px;
+    border: 5px solid white; 
+}
+
+#mensagemJogo {
+    font-size: 1.2em;
+    color: #ad1457;
+    font-weight: bold;
+    min-height: 30px; 
+    transition: color 0.3s; /* Para transição de cor na mensagem */
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Ajustes para telas menores (Celular) */
+@media (max-width: 620px) { /* Aumentei um pouco o breakpoint para quando mudar para 3 colunas no mobile */
+    .tabuleiro-jogo {
+        grid-template-columns: repeat(3, 1fr); /* 3 colunas para celular */
+        gap: 8px;
+    }
+    .carta {
+        width: 80px;  /* Leve ajuste, original era 80px */
+        height: 112px;
+    }
+    .container-inicial, .container-jogo, .container-final {
+        padding: 20px; /* Menos padding em telas pequenas */
+    }
+}
+
+
+@media (max-width: 420px) { /* Breakpoint para telas bem pequenas */
+     .tabuleiro-jogo {
+        grid-template-columns: repeat(3, 1fr); /* Mantém 3 colunas, cartas ficam menores */
+        gap: 6px;
+    }
+    .carta {
+        width: 70px; 
+        height: 98px; 
+    }
+     h1 { font-size: 1.8em; }
+     h2 { font-size: 1.3em; }
+     p { font-size: 0.9em; }
+     button { padding: 10px 20px; font-size: 1em;}
+     .container-final img#fotoFinal {
+         max-width: 90%;
+     }
+}
+
+.caixa-presente-container {
+    font-size: 45px; /* Reduzi um pouco */
+    cursor: pointer;
+    margin-top: 15px; 
+    margin-bottom: 15px; 
+    display: inline-block; 
+    transition: transform 0.2s ease-in-out;
+}
+
+.caixa-presente-container:hover {
+    transform: scale(1.2); 
+}
+
+.coracao-flutuante {
+    position: fixed; 
+    font-size: 20px; 
+    user-select: none; 
+    pointer-events: none; 
+    z-index: 9999; 
+    animation: flutuarParaCima 3s ease-out forwards; /* Mudei para ease-out */
+}
+/* Cor do coracao flutuante será definida no JS para variedade */
+
+@keyframes flutuarParaCima {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(0.5); 
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-350px) scale(1.7) rotate(25deg); /* Ajustei um pouco a animação */
+    }
+}
+
+.coracao-fundo-animado {
+    position: fixed; 
+    bottom: -60px; /* Começa mais abaixo */
+    font-size: 15px; 
+    /* color: #ffc1e3; Removido para ser definido no JS */
+    user-select: none;
+    pointer-events: none;
+    z-index: -1; /* Deixei -1 para garantir que fiquem BEM no fundo */
+    opacity: 0; 
+    animation-name: flutuarInfinitamente;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+@keyframes flutuarInfinitamente {
+    0% {
+        transform: translateY(0vh) rotate(-10deg); /* Começa um pouco rotacionado */
+        opacity: 0; 
+    }
+    20% { /* Aparece mais rápido */
+        opacity: 0.5;
+    }
+    80% {
+        opacity: 0.5;
+    }
+    100% {
+        transform: translateY(-120vh) rotate(30deg); /* Sobe mais e rotaciona um pouco diferente */
+        opacity: 0; 
+    }
+}
+
+.coracao-fundo-estatico {
+    position: fixed;
+    font-size: 20px; 
+    /* color: rgba(255, 193, 227, 0.5); Removido para ser definido no JS */
+    user-select: none;
+    pointer-events: none;
+    z-index: -1; /* Deixei -1 para garantir que fiquem BEM no fundo */
+    opacity: 0; 
+
+    animation-name: pulsarSuave;
+    animation-duration: 4.5s; /* Um pouco mais lento */
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+}
+
+@keyframes pulsarSuave {
+    0%, 100% {
+        transform: scale(0.9); /* Começa e termina um pouco menor */
+        opacity: 0.2; 
+    }
+    50% {
+        transform: scale(1.1); 
+        opacity: 0.5; 
+    }
+}
